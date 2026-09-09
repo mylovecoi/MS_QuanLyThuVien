@@ -1,14 +1,16 @@
 import axios from 'axios';
 
-const identityClient = axios.create({
-  baseURL: import.meta.env.VITE_IDENTITY_SERVICE_URL || 'http://localhost:5005/api',
+// Tất cả request đi qua API Gateway (Port 5000)
+// Gateway sẽ forward tới đúng microservice tương ứng
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // Tăng timeout lên 30s để chờ backend khởi động
+  timeout: 30000,
 });
 
-identityClient.interceptors.request.use(
+apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -19,18 +21,43 @@ identityClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-identityClient.interceptors.response.use(
+apiClient.interceptors.response.use(
   (response) => {
     return response.data?.data !== undefined ? response.data.data : response.data;
   },
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
+
     if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
       return Promise.reject({
-        message: 'Kết nối đến IdentityService (Port 5005) quá thời gian chờ (Timeout). Vui lòng kiểm tra backend đã bật chưa.',
+        message: 'Kết nối đến API Gateway (Port 5000) quá thời gian chờ. Vui lòng kiểm tra backend đã khởi động chưa.',
       });
     }
+
+    // Auto refresh token khi 401
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (refreshToken) {
+          const res = await axios.post(
+            `${import.meta.env.VITE_API_GATEWAY_URL || 'http://localhost:5000/api'}/auth/refresh`,
+            { refreshToken }
+          );
+          const newAccessToken = res.data.data.accessToken;
+          localStorage.setItem('token', newAccessToken);
+          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          return apiClient(originalRequest);
+        }
+      } catch {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/login';
+      }
+    }
+
     return Promise.reject(error.response?.data || error);
   }
 );
 
-export default identityClient;
+export default apiClient;
