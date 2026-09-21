@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using ProfileService.API.Configurations;
 using ProfileService.Business.Services.Implementations;
 using ProfileService.Business.Services.Interfaces;
+using ProfileServiceImpl = ProfileService.Business.Services.Implementations.ProfileService;
 using ProfileService.DataAccess.Contexts;
 using ProfileService.DataAccess.Repositories.Implementations;
 using ProfileService.DataAccess.Repositories.Interfaces;
@@ -34,11 +35,11 @@ namespace ProfileService.API.Extensions
         public static IServiceCollection AddRepositoriesAndServices(this IServiceCollection services)
         {
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+            services.AddScoped<IProfileRepository, ProfileRepository>();
             services.AddScoped<IPhongBanRepository, PhongBanRepository>();
             services.AddScoped<IChucVuRepository, ChucVuRepository>();
 
-            services.AddScoped<IUserProfileService, UserProfileService>();
+            services.AddScoped<IProfileService, ProfileServiceImpl>();
             services.AddScoped<IPhongBanService, PhongBanService>();
             services.AddScoped<IChucVuService, ChucVuService>();
 

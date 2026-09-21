@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ProfileService.Business.Dtos;
+using ProfileService.Business.Dtos.Requests;
+using ProfileService.Business.Dtos.Responses;
 using ProfileService.Business.Exceptions;
 using ProfileService.Business.Mappers;
 using ProfileService.Business.Services.Interfaces;
@@ -11,43 +8,43 @@ using ProfileService.DataAccess.Repositories.Interfaces;
 
 namespace ProfileService.Business.Services.Implementations
 {
-    public class UserProfileService : IUserProfileService
+    public class ProfileService : IProfileService
     {
-        private readonly IUserProfileRepository _userProfileRepository;
+        private readonly IProfileRepository _profileRepository;
         private readonly IPhongBanRepository _phongBanRepository;
         private readonly IChucVuRepository _chucVuRepository;
 
-        public UserProfileService(
-            IUserProfileRepository userProfileRepository,
+        public ProfileService(
+            IProfileRepository profileRepository,
             IPhongBanRepository phongBanRepository,
             IChucVuRepository chucVuRepository)
         {
-            _userProfileRepository = userProfileRepository;
+            _profileRepository = profileRepository;
             _phongBanRepository = phongBanRepository;
             _chucVuRepository = chucVuRepository;
         }
 
-        public async Task<IEnumerable<UserProfileDto>> GetAllProfilesAsync()
+        public async Task<IEnumerable<ProfileDto>> GetAllProfilesAsync()
         {
-            var profiles = await _userProfileRepository.GetAllAsync();
+            var profiles = await _profileRepository.GetAllAsync();
             return profiles.Select(ProfileMapper.ToDto);
         }
 
-        public async Task<UserProfileDto?> GetProfileByIdAsync(Guid id)
+        public async Task<ProfileDto?> GetProfileByIdAsync(Guid id)
         {
-            var profile = await _userProfileRepository.GetByIdAsync(id);
+            var profile = await _profileRepository.GetByIdAsync(id);
             return profile == null ? null : ProfileMapper.ToDto(profile);
         }
 
-        public async Task<UserProfileDto?> GetProfileByUserIdAsync(Guid userId)
+        public async Task<ProfileDto?> GetProfileByUserIdAsync(Guid userId)
         {
-            var profile = await _userProfileRepository.GetByUserIdAsync(userId);
+            var profile = await _profileRepository.GetByUserIdAsync(userId);
             return profile == null ? null : ProfileMapper.ToDto(profile);
         }
 
-        public async Task<UserProfileDto> CreateProfileAsync(CreateUserProfileRequest request)
+        public async Task<ProfileDto> CreateProfileAsync(ProfileRequest request)
         {
-            var existingProfile = await _userProfileRepository.GetByUserIdAsync(request.UserId);
+            var existingProfile = await _profileRepository.GetByUserIdAsync(request.UserId);
             if (existingProfile != null)
             {
                 throw new BadRequestException($"Hồ sơ người dùng với UserId '{request.UserId}' đã tồn tại.");
@@ -67,7 +64,7 @@ namespace ProfileService.Business.Services.Implementations
                 if (chucVu != null) tenChucVu = chucVu.TenChucVu;
             }
 
-            var entity = new UserProfileEntity
+            var entity = new ProfileEntity
             {
                 UserId = request.UserId,
                 MaCanBo = request.MaCanBo,
@@ -86,15 +83,15 @@ namespace ProfileService.Business.Services.Implementations
                 TenChucVu = tenChucVu
             };
 
-            await _userProfileRepository.AddAsync(entity);
-            await _userProfileRepository.SaveChangesAsync();
+            await _profileRepository.AddAsync(entity);
+            await _profileRepository.SaveChangesAsync();
 
             return ProfileMapper.ToDto(entity);
         }
 
-        public async Task<UserProfileDto> UpdateProfileAsync(Guid userId, UpdateUserProfileRequest request)
+        public async Task<ProfileDto> UpdateProfileAsync(Guid userId, ProfileRequest request)
         {
-            var profile = await _userProfileRepository.GetByUserIdAsync(userId);
+            var profile = await _profileRepository.GetByUserIdAsync(userId);
             if (profile == null)
             {
                 throw new NotFoundException($"Không tìm thấy hồ sơ người dùng với UserId '{userId}'.");
@@ -125,19 +122,19 @@ namespace ProfileService.Business.Services.Implementations
             profile.AvatarUrl = request.AvatarUrl;
             profile.DiaChiHienNay = request.DiaChiHienNay;
 
-            _userProfileRepository.Update(profile);
-            await _userProfileRepository.SaveChangesAsync();
+            _profileRepository.Update(profile);
+            await _profileRepository.SaveChangesAsync();
 
             return ProfileMapper.ToDto(profile);
         }
 
         public async Task<bool> DeleteProfileAsync(Guid id)
         {
-            var profile = await _userProfileRepository.GetByIdAsync(id);
+            var profile = await _profileRepository.GetByIdAsync(id);
             if (profile == null) return false;
 
-            _userProfileRepository.Delete(profile);
-            return await _userProfileRepository.SaveChangesAsync();
+            _profileRepository.Delete(profile);
+            return await _profileRepository.SaveChangesAsync();
         }
     }
 }

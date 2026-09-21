@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ProfileService.Business.Dtos;
+using ProfileService.Business.Dtos.Requests;
+using ProfileService.Business.Dtos.Responses;
 using ProfileService.Business.Exceptions;
 using ProfileService.Business.Mappers;
 using ProfileService.Business.Services.Interfaces;
@@ -32,7 +29,7 @@ namespace ProfileService.Business.Services.Implementations
             return item == null ? null : ProfileMapper.ToDto(item);
         }
 
-        public async Task<PhongBanDto> CreatePhongBanAsync(CreatePhongBanRequest request)
+        public async Task<PhongBanDto> CreatePhongBanAsync(PhongBanRequest request)
         {
             var existing = await _phongBanRepository.GetByMaPhongBanAsync(request.MaPhongBan);
             if (existing != null)
@@ -76,7 +73,7 @@ namespace ProfileService.Business.Services.Implementations
             return item == null ? null : ProfileMapper.ToDto(item);
         }
 
-        public async Task<ChucVuDto> CreateChucVuAsync(CreateChucVuRequest request)
+        public async Task<ChucVuDto> CreateChucVuAsync(ChucVuRequest request)
         {
             var existing = await _chucVuRepository.GetByMaChucVuAsync(request.MaChucVu);
             if (existing != null)

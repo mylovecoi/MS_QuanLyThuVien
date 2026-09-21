@@ -10,7 +10,7 @@ namespace ProfileService.DataAccess.Contexts
         {
         }
 
-        public DbSet<UserProfileEntity> UserProfiles => Set<UserProfileEntity>();
+        public DbSet<ProfileEntity> Profiles => Set<ProfileEntity>();
         public DbSet<PhongBanEntity> PhongBans => Set<PhongBanEntity>();
         public DbSet<ChucVuEntity> ChucVus => Set<ChucVuEntity>();
 

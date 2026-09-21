@@ -1,9 +1,8 @@
-using System;
+using IdentityService.DataAccess.Entities;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using IdentityService.DataAccess.Entities;
 
 namespace IdentityService.Business.Helpers
 {

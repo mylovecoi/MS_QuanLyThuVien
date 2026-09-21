@@ -4,11 +4,11 @@ using ProfileService.DataAccess.Entities;
 
 namespace ProfileService.DataAccess.Configurations
 {
-    public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfileEntity>
+    public class ProfileConfiguration : IEntityTypeConfiguration<ProfileEntity>
     {
-        public void Configure(EntityTypeBuilder<UserProfileEntity> builder)
+        public void Configure(EntityTypeBuilder<ProfileEntity> builder)
         {
-            builder.ToTable("UserProfiles");
+            builder.ToTable("Profiles");
             builder.HasKey(x => x.Id);
 
             // Indexes
@@ -28,12 +28,12 @@ namespace ProfileService.DataAccess.Configurations
 
             // Relationships
             builder.HasOne(x => x.PhongBan)
-                   .WithMany(pb => pb.UserProfiles)
+                   .WithMany(pb => pb.Profiles)
                    .HasForeignKey(x => x.PhongBanId)
                    .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.ChucVu)
-                   .WithMany(cv => cv.UserProfiles)
+                   .WithMany(cv => cv.Profiles)
                    .HasForeignKey(x => x.ChucVuId)
                    .OnDelete(DeleteBehavior.SetNull);
         }

@@ -1,5 +1,3 @@
-using System;
-
 namespace ProfileService.Business.Exceptions
 {
     public class AppException : Exception

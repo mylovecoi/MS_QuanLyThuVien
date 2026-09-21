@@ -1,9 +1,7 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using IdentityService.DataAccess.Contexts;
 using IdentityService.DataAccess.Entities;
 using IdentityService.DataAccess.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.DataAccess.Seed
 {

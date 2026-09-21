@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using IdentityService.DataAccess.Contexts;
 using IdentityService.DataAccess.Entities;
 using IdentityService.DataAccess.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace IdentityService.DataAccess.Repositories.Implementations
 {

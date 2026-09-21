@@ -1,13 +1,13 @@
-using ProfileService.Business.Dtos;
+using ProfileService.Business.Dtos.Responses;
 using ProfileService.DataAccess.Entities;
 
 namespace ProfileService.Business.Mappers
 {
     public static class ProfileMapper
     {
-        public static UserProfileDto ToDto(UserProfileEntity entity)
+        public static ProfileDto ToDto(ProfileEntity entity)
         {
-            return new UserProfileDto
+            return new ProfileDto
             {
                 Id = entity.Id,
                 UserId = entity.UserId,

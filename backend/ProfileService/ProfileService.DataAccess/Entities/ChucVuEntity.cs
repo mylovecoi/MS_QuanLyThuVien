@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace ProfileService.DataAccess.Entities
 {
     public class ChucVuEntity : BaseEntity
@@ -11,6 +8,6 @@ namespace ProfileService.DataAccess.Entities
         public bool IsActive { get; set; } = true;                // Trạng thái hoạt động
 
         // Navigation Properties
-        public virtual ICollection<UserProfileEntity> UserProfiles { get; set; } = new List<UserProfileEntity>();
+        public virtual ICollection<ProfileEntity> Profiles { get; set; } = new List<ProfileEntity>();
     }
 }

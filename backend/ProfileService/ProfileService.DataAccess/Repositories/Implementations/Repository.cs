@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProfileService.DataAccess.Contexts;
 using ProfileService.DataAccess.Entities;
 using ProfileService.DataAccess.Repositories.Interfaces;
+using System.Linq.Expressions;
 
 namespace ProfileService.DataAccess.Repositories.Implementations
 {
@@ -65,23 +61,23 @@ namespace ProfileService.DataAccess.Repositories.Implementations
         }
     }
 
-    public class UserProfileRepository : Repository<UserProfileEntity>, IUserProfileRepository
+    public class ProfileRepository : Repository<ProfileEntity>, IProfileRepository
     {
-        public UserProfileRepository(ProfileDbContext context) : base(context)
+        public ProfileRepository(ProfileDbContext context) : base(context)
         {
         }
 
-        public async Task<UserProfileEntity?> GetByUserIdAsync(Guid userId)
+        public async Task<ProfileEntity?> GetByUserIdAsync(Guid userId)
         {
             return await _dbSet.FirstOrDefaultAsync(p => p.UserId == userId && !p.IsDeleted);
         }
 
-        public async Task<UserProfileEntity?> GetByMaCanBoAsync(string maCanBo)
+        public async Task<ProfileEntity?> GetByMaCanBoAsync(string maCanBo)
         {
             return await _dbSet.FirstOrDefaultAsync(p => p.MaCanBo == maCanBo && !p.IsDeleted);
         }
 
-        public async Task<IEnumerable<UserProfileEntity>> GetByPhongBanIdAsync(Guid phongBanId)
+        public async Task<IEnumerable<ProfileEntity>> GetByPhongBanIdAsync(Guid phongBanId)
         {
             return await _dbSet.Where(p => p.PhongBanId == phongBanId && !p.IsDeleted).ToListAsync();
         }

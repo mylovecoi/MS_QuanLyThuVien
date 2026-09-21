@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using IdentityService.DataAccess.Entities;
+using System.Linq.Expressions;
 
 namespace IdentityService.DataAccess.Repositories.Interfaces
 {

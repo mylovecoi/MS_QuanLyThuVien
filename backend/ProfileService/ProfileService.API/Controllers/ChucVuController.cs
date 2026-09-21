@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ProfileService.Business.Dtos;
+using ProfileService.Business.Dtos.Requests;
+using ProfileService.Business.Dtos.Responses;
 using ProfileService.Business.Services.Interfaces;
 
 namespace ProfileService.API.Controllers
@@ -33,7 +34,7 @@ namespace ProfileService.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateChucVuRequest request)
+        public async Task<IActionResult> Create([FromBody] ChucVuRequest request)
         {
             var result = await _chucVuService.CreateChucVuAsync(request);
             return Ok(result);

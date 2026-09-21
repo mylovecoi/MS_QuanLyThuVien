@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using ProfileService.DataAccess.Entities;
+using System.Linq.Expressions;
 
 namespace ProfileService.DataAccess.Repositories.Interfaces
 {
@@ -18,11 +15,11 @@ namespace ProfileService.DataAccess.Repositories.Interfaces
         Task<bool> SaveChangesAsync();
     }
 
-    public interface IUserProfileRepository : IRepository<UserProfileEntity>
+    public interface IProfileRepository : IRepository<ProfileEntity>
     {
-        Task<UserProfileEntity?> GetByUserIdAsync(Guid userId);
-        Task<UserProfileEntity?> GetByMaCanBoAsync(string maCanBo);
-        Task<IEnumerable<UserProfileEntity>> GetByPhongBanIdAsync(Guid phongBanId);
+        Task<ProfileEntity?> GetByUserIdAsync(Guid userId);
+        Task<ProfileEntity?> GetByMaCanBoAsync(string maCanBo);
+        Task<IEnumerable<ProfileEntity>> GetByPhongBanIdAsync(Guid phongBanId);
     }
 
     public interface IPhongBanRepository : IRepository<PhongBanEntity>

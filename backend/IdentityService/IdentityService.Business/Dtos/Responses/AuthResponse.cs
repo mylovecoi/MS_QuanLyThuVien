@@ -1,5 +1,3 @@
-using System;
-
 namespace IdentityService.Business.Dtos.Responses
 {
     public class UserResponse

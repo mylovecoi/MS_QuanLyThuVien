@@ -1,6 +1,3 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using IdentityService.Business.Constants;
 using IdentityService.Business.Dtos.Requests;
 using IdentityService.Business.Dtos.Responses;
@@ -9,6 +6,7 @@ using IdentityService.Business.Helpers;
 using IdentityService.Business.Mappers;
 using IdentityService.DataAccess.Entities;
 using IdentityService.DataAccess.Repositories.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace IdentityService.Business.Services
 {

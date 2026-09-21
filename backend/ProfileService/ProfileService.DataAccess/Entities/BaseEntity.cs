@@ -1,5 +1,3 @@
-using System;
-
 namespace ProfileService.DataAccess.Entities
 {
     public abstract class BaseEntity

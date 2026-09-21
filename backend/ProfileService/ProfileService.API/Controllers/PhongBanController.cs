@@ -1,7 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ProfileService.Business.Dtos;
+using ProfileService.Business.Dtos.Requests;
+using ProfileService.Business.Dtos.Responses;
 using ProfileService.Business.Services.Interfaces;
 
 namespace ProfileService.API.Controllers
@@ -33,7 +34,7 @@ namespace ProfileService.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreatePhongBanRequest request)
+        public async Task<IActionResult> Create([FromBody] PhongBanRequest request)
         {
             var result = await _phongBanService.CreatePhongBanAsync(request);
             return Ok(result);

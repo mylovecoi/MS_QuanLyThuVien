@@ -1,5 +1,3 @@
-using System;
-
 namespace IdentityService.Business.Exceptions
 {
     public class AppException : Exception

@@ -1,7 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using ProfileService.Business.Dtos;
+using ProfileService.Business.Dtos.Requests;
+using ProfileService.Business.Dtos.Responses;
 
 namespace ProfileService.Business.Services.Interfaces
 {
@@ -9,13 +7,13 @@ namespace ProfileService.Business.Services.Interfaces
     {
         Task<IEnumerable<PhongBanDto>> GetAllPhongBansAsync();
         Task<PhongBanDto?> GetPhongBanByIdAsync(Guid id);
-        Task<PhongBanDto> CreatePhongBanAsync(CreatePhongBanRequest request);
+        Task<PhongBanDto> CreatePhongBanAsync(PhongBanRequest request);
     }
 
     public interface IChucVuService
     {
         Task<IEnumerable<ChucVuDto>> GetAllChucVusAsync();
         Task<ChucVuDto?> GetChucVuByIdAsync(Guid id);
-        Task<ChucVuDto> CreateChucVuAsync(CreateChucVuRequest request);
+        Task<ChucVuDto> CreateChucVuAsync(ChucVuRequest request);
     }
 }

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace ProfileService.DataAccess.Entities
 {
     public class PhongBanEntity : BaseEntity
@@ -15,6 +12,6 @@ namespace ProfileService.DataAccess.Entities
         // Navigation Properties
         public virtual PhongBanEntity? Parent { get; set; }
         public virtual ICollection<PhongBanEntity> Children { get; set; } = new List<PhongBanEntity>();
-        public virtual ICollection<UserProfileEntity> UserProfiles { get; set; } = new List<UserProfileEntity>();
+        public virtual ICollection<ProfileEntity> Profiles { get; set; } = new List<ProfileEntity>();
     }
 }

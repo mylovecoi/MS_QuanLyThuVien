@@ -1,10 +1,6 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProfileService.DataAccess.Contexts;
 using ProfileService.DataAccess.Entities;
-using ProfileService.DataAccess.Enums;
 
 namespace ProfileService.DataAccess.Seed
 {
