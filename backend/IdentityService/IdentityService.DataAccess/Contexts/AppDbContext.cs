@@ -11,6 +11,12 @@ namespace IdentityService.DataAccess.Contexts
         }
 
         public DbSet<UserEntity> Users => Set<UserEntity>();
+        public DbSet<RoleEntity> Roles => Set<RoleEntity>();
+        public DbSet<PermissionEntity> Permissions => Set<PermissionEntity>();
+        public DbSet<UserRoleEntity> UserRoles => Set<UserRoleEntity>();
+        public DbSet<RolePermissionEntity> RolePermissions => Set<RolePermissionEntity>();
+        public DbSet<RefreshTokenEntity> RefreshTokens => Set<RefreshTokenEntity>();
+        public DbSet<InvalidatedTokenEntity> InvalidatedTokens => Set<InvalidatedTokenEntity>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

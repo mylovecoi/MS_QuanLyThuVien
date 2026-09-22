@@ -1,5 +1,3 @@
-using System;
-
 namespace IdentityService.DataAccess.Entities
 {
     public abstract class BaseEntity

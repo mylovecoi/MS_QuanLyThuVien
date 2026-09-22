@@ -1,14 +1,17 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
+using IdentityService.API.Authorization;
 using IdentityService.API.Configurations;
 using IdentityService.Business.Services;
 using IdentityService.DataAccess.Contexts;
 using IdentityService.DataAccess.Repositories.Implementations;
 using IdentityService.DataAccess.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityService.API.Extensions
 {
@@ -34,7 +37,15 @@ namespace IdentityService.API.Extensions
         {
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+            services.AddScoped<IInvalidatedTokenRepository, InvalidatedTokenRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IAuthService, AuthService>();
+
+            // Permission Authorization
+            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
             return services;
         }
 
@@ -59,6 +70,25 @@ namespace IdentityService.API.Extensions
                     ValidIssuer = jwtOptions.Issuer,
                     ValidAudience = jwtOptions.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = async context =>
+                    {
+                        var invalidatedTokenRepo = context.HttpContext.RequestServices.GetRequiredService<IInvalidatedTokenRepository>();
+                        var jti = context.Principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value
+                               ?? context.Principal?.FindFirst("jti")?.Value;
+
+                        if (!string.IsNullOrEmpty(jti))
+                        {
+                            var isInvalidated = await invalidatedTokenRepo.IsInvalidatedAsync(jti);
+                            if (isInvalidated)
+                            {
+                                context.Fail("Access token này đã bị vô hiệu hóa do Logout.");
+                            }
+                        }
+                    }
                 };
             });
 

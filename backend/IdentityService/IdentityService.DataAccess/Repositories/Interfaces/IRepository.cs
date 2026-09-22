@@ -13,10 +13,4 @@ namespace IdentityService.DataAccess.Repositories.Interfaces
         void Delete(T entity);
         Task<bool> SaveChangesAsync();
     }
-
-    public interface IUserRepository : IRepository<UserEntity>
-    {
-        Task<UserEntity?> GetByUsernameAsync(string username);
-        Task<UserEntity?> GetByEmailAsync(string email);
-    }
 }

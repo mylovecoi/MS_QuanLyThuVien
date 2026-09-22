@@ -55,21 +55,4 @@ namespace IdentityService.DataAccess.Repositories.Implementations
             return await _context.SaveChangesAsync() > 0;
         }
     }
-
-    public class UserRepository : Repository<UserEntity>, IUserRepository
-    {
-        public UserRepository(AppDbContext context) : base(context)
-        {
-        }
-
-        public async Task<UserEntity?> GetByUsernameAsync(string username)
-        {
-            return await _dbSet.FirstOrDefaultAsync(u => u.Username == username && !u.IsDeleted);
-        }
-
-        public async Task<UserEntity?> GetByEmailAsync(string email)
-        {
-            return await _dbSet.FirstOrDefaultAsync(u => u.Email == email && !u.IsDeleted);
-        }
-    }
 }
