@@ -6,7 +6,7 @@ namespace ProfileService.DataAccess.Seed
 {
     public static class ProfileDbSeeder
     {
-        public static async Task SeedDataAsync(ProfileDbContext context)
+        public static async Task SeedDataAsync(ProfileDbContext context, Guid adminUserId)
         {
             if (await context.PhongBans.AnyAsync())
             {

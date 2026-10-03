@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axiosClient from '@/services/axiosClient';
+import { authApi } from '@/features/auth/api/authApi';
 
 export const AuthContext = createContext(null);
 
@@ -32,7 +33,15 @@ export const AuthProvider = ({ children }) => {
     setUser(authData.user);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    // Gọi API để thu hồi token phía server (vô hiệu hóa access token hiện tại
+    // và refresh token). Lỗi không chặn việc đăng xuất phía client.
+    try {
+      await authApi.logout({ refreshToken });
+    } catch {
+      /* bỏ qua */
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     setUser(null);

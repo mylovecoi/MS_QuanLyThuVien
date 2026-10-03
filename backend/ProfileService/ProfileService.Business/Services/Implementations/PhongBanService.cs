@@ -1,26 +1,41 @@
+using System.Linq;
+using FluentValidation;
 using ProfileService.Business.Dtos.Requests;
 using ProfileService.Business.Dtos.Responses;
-using ProfileService.Business.Exceptions;
 using ProfileService.Business.Mappers;
 using ProfileService.Business.Services.Interfaces;
+using ProfileService.Business.Validators;
 using ProfileService.DataAccess.Entities;
 using ProfileService.DataAccess.Repositories.Interfaces;
+using Shared.Contracts.Exceptions;
+using Shared.Contracts.Responses;
 
 namespace ProfileService.Business.Services.Implementations
 {
     public class PhongBanService : IPhongBanService
     {
         private readonly IPhongBanRepository _phongBanRepository;
+        private readonly IValidator<PhongBanRequest> _validator;
+        private readonly IValidator<ChucVuRequest> _chucVuValidator;
 
-        public PhongBanService(IPhongBanRepository phongBanRepository)
+        public PhongBanService(
+            IPhongBanRepository phongBanRepository,
+            IValidator<PhongBanRequest> validator,
+            IValidator<ChucVuRequest> chucVuValidator)
         {
             _phongBanRepository = phongBanRepository;
+            _validator = validator;
+            _chucVuValidator = chucVuValidator;
         }
 
-        public async Task<IEnumerable<PhongBanDto>> GetAllPhongBansAsync()
+        public async Task<PagedResult<PhongBanDto>> GetPhongBansAsync(int page, int pageSize)
         {
-            var list = await _phongBanRepository.GetAllAsync();
-            return list.Select(ProfileMapper.ToDto);
+            var paged = await _phongBanRepository.GetPagedAsync(page, pageSize);
+            var items = paged.ItemsOf<PhongBanEntity>()
+                .Select(ProfileMapper.ToDto)
+                .ToList();
+
+            return PagedResult<PhongBanDto>.Create(items, paged.TotalCount, paged.Page, paged.PageSize);
         }
 
         public async Task<PhongBanDto?> GetPhongBanByIdAsync(Guid id)
@@ -31,10 +46,12 @@ namespace ProfileService.Business.Services.Implementations
 
         public async Task<PhongBanDto> CreatePhongBanAsync(PhongBanRequest request)
         {
+            await ValidationRunner.EnsureValidAsync(_validator, request);
+
             var existing = await _phongBanRepository.GetByMaPhongBanAsync(request.MaPhongBan);
             if (existing != null)
             {
-                throw new BadRequestException($"Mã phòng ban '{request.MaPhongBan}' đã tồn tại.");
+                throw new ConflictException($"Mã phòng ban '{request.MaPhongBan}' đã tồn tại.");
             }
 
             var entity = new PhongBanEntity
@@ -55,16 +72,22 @@ namespace ProfileService.Business.Services.Implementations
     public class ChucVuService : IChucVuService
     {
         private readonly IChucVuRepository _chucVuRepository;
+        private readonly IValidator<ChucVuRequest> _chucVuValidator;
 
-        public ChucVuService(IChucVuRepository chucVuRepository)
+        public ChucVuService(IChucVuRepository chucVuRepository, IValidator<ChucVuRequest> chucVuValidator)
         {
             _chucVuRepository = chucVuRepository;
+            _chucVuValidator = chucVuValidator;
         }
 
-        public async Task<IEnumerable<ChucVuDto>> GetAllChucVusAsync()
+        public async Task<PagedResult<ChucVuDto>> GetChucVusAsync(int page, int pageSize)
         {
-            var list = await _chucVuRepository.GetAllAsync();
-            return list.Select(ProfileMapper.ToDto);
+            var paged = await _chucVuRepository.GetPagedAsync(page, pageSize);
+            var items = paged.ItemsOf<ChucVuEntity>()
+                .Select(ProfileMapper.ToDto)
+                .ToList();
+
+            return PagedResult<ChucVuDto>.Create(items, paged.TotalCount, paged.Page, paged.PageSize);
         }
 
         public async Task<ChucVuDto?> GetChucVuByIdAsync(Guid id)
@@ -75,10 +98,12 @@ namespace ProfileService.Business.Services.Implementations
 
         public async Task<ChucVuDto> CreateChucVuAsync(ChucVuRequest request)
         {
+            await ValidationRunner.EnsureValidAsync(_chucVuValidator, request);
+
             var existing = await _chucVuRepository.GetByMaChucVuAsync(request.MaChucVu);
             if (existing != null)
             {
-                throw new BadRequestException($"Mã chức vụ '{request.MaChucVu}' đã tồn tại.");
+                throw new ConflictException($"Mã chức vụ '{request.MaChucVu}' đã tồn tại.");
             }
 
             var entity = new ChucVuEntity

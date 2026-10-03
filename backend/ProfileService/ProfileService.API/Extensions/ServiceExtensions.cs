@@ -1,12 +1,16 @@
 using System.Text;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using ProfileService.API.Configurations;
+using ProfileService.API.Filters;
+using ProfileService.Business.Dtos.Requests;
 using ProfileService.Business.Services.Implementations;
 using ProfileService.Business.Services.Interfaces;
+using ProfileService.Business.Validators;
 using ProfileServiceImpl = ProfileService.Business.Services.Implementations.ProfileService;
 using ProfileService.DataAccess.Contexts;
 using ProfileService.DataAccess.Repositories.Implementations;
@@ -18,17 +22,14 @@ namespace ProfileService.API.Extensions
     {
         public static IServiceCollection AddDatabaseContext(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-            if (!string.IsNullOrEmpty(connectionString))
-            {
-                services.AddDbContext<ProfileDbContext>(options =>
-                    options.UseSqlServer(connectionString));
-            }
-            else
-            {
-                services.AddDbContext<ProfileDbContext>(options =>
-                    options.UseInMemoryDatabase("ProfileInMemoryDb"));
-            }
+            // Connection string bắt buộc: ConfigurationGuard.RequireSecrets chạy trước
+            // trong Program.cs và chặn app nếu giá trị rỗng. Không có fallback InMemory
+            // vì sẽ khiến dữ liệu dev biến mất khi restart mà không có cảnh báo.
+            var connectionString = configuration.GetConnectionString("DefaultConnection")!;
+
+            services.AddDbContext<ProfileDbContext>(options =>
+                options.UseSqlServer(connectionString));
+
             return services;
         }
 
@@ -42,6 +43,25 @@ namespace ProfileService.API.Extensions
             services.AddScoped<IProfileService, ProfileServiceImpl>();
             services.AddScoped<IPhongBanService, PhongBanService>();
             services.AddScoped<IChucVuService, ChucVuService>();
+
+            // FluentValidation: đăng ký thủ công từng validator để khỏi thêm package
+            // FluentValidation.DependencyInjectionExtensions. Validator được inject
+            // vào service và chạy qua ValidationRunner.EnsureValidAsync.
+            services.AddScoped<IValidator<ProfileRequest>, ProfileRequestValidator>();
+            services.AddScoped<IValidator<PhongBanRequest>, PhongBanRequestValidator>();
+            services.AddScoped<IValidator<ChucVuRequest>, ChucVuRequestValidator>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddInternalApiAuthentication(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<InternalApiOptions>(
+                configuration.GetSection(InternalApiOptions.SectionName));
+
+            // Filter dùng IOptions + gọi qua DI, không thể AddAttribute cho
+            // authorization filter nên dùng AddScoped cho ServiceFilter.
+            services.AddScoped<InternalApiKeyFilter>();
 
             return services;
         }

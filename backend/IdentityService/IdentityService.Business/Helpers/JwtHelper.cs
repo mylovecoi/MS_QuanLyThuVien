@@ -86,12 +86,15 @@ namespace IdentityService.Business.Helpers
     {
         public static string HashPassword(string password)
         {
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(password + "_secret_salt"));
+            return BCrypt.Net.BCrypt.HashPassword(password);
         }
 
         public static bool VerifyPassword(string password, string hashedPassword)
         {
-            return HashPassword(password) == hashedPassword;
+            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(hashedPassword))
+                return false;
+
+            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
         }
     }
 }

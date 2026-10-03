@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProfileService.DataAccess",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "ApiGateway\ApiGateway.csproj", "{3EC62E80-06B7-4CAC-9E81-8DD5D6478012}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Contracts", "Shared.Contracts\Shared.Contracts.csproj", "{05962896-CC22-457C-B7CC-3329690F7208}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,18 @@ Global
 		{3EC62E80-06B7-4CAC-9E81-8DD5D6478012}.Release|x64.Build.0 = Release|Any CPU
 		{3EC62E80-06B7-4CAC-9E81-8DD5D6478012}.Release|x86.ActiveCfg = Release|Any CPU
 		{3EC62E80-06B7-4CAC-9E81-8DD5D6478012}.Release|x86.Build.0 = Release|Any CPU
+		{05962896-CC22-457C-B7CC-3329690F7208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05962896-CC22-457C-B7CC-3329690F7208}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05962896-CC22-457C-B7CC-3329690F7208}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{05962896-CC22-457C-B7CC-3329690F7208}.Debug|x64.Build.0 = Debug|Any CPU
+		{05962896-CC22-457C-B7CC-3329690F7208}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{05962896-CC22-457C-B7CC-3329690F7208}.Debug|x86.Build.0 = Debug|Any CPU
+		{05962896-CC22-457C-B7CC-3329690F7208}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05962896-CC22-457C-B7CC-3329690F7208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05962896-CC22-457C-B7CC-3329690F7208}.Release|x64.ActiveCfg = Release|Any CPU
+		{05962896-CC22-457C-B7CC-3329690F7208}.Release|x64.Build.0 = Release|Any CPU
+		{05962896-CC22-457C-B7CC-3329690F7208}.Release|x86.ActiveCfg = Release|Any CPU
+		{05962896-CC22-457C-B7CC-3329690F7208}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

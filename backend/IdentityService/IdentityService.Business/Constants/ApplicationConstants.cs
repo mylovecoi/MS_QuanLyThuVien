@@ -14,6 +14,8 @@ namespace IdentityService.Business.Constants
             public const string UserNotFound = "Không tìm thấy người dùng.";
             public const string UsernameAlreadyExists = "Tên đăng nhập đã tồn tại.";
             public const string EmailAlreadyExists = "Email đã được sử dụng.";
+            public const string InvalidToken = "Token không hợp lệ.";
+            public const string RoleNotFound = "Không tìm thấy vai trò.";
         }
     }
 }

@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/feedback/Alert';
+import { toErrorText } from '@/utils/apiError';
 
 export const LoginForm = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -23,7 +24,7 @@ export const LoginForm = () => {
       login(response);
       navigate('/profile');
     } catch (err) {
-      setError(err.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+      setError(toErrorText(err, 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.'));
     } finally {
       setIsLoading(false);
     }

@@ -4,6 +4,7 @@ import { authApi } from '../api/authApi';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/feedback/Alert';
+import { toErrorText } from '@/utils/apiError';
 
 export const RegisterPage = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '', fullName: '' });
@@ -20,7 +21,10 @@ export const RegisterPage = () => {
       await authApi.register(formData);
       navigate('/login');
     } catch (err) {
-      setError(err.message || 'Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.');
+      // Backend trả errors[] cho cả lỗi ModelState lẫn lỗi FluentValidation,
+      // mỗi phần tử là một lý do cụ thể. `message` chỉ là câu chung chung
+      // ("Dữ liệu đầu vào không hợp lệ.") nên không giúp người dùng sửa gì.
+      setError(toErrorText(err, 'Đăng ký thất bại. Vui lòng kiểm tra lại thông tin.'));
     } finally {
       setIsLoading(false);
     }

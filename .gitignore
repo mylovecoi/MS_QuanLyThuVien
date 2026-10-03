@@ -21,9 +21,12 @@
 TestResult.xml
 
 # Secret & Local Configurations (Backend)
+# appsettings.json chi chua placeholder. Gia tri thật luôn nam o user-secrets
+# hoac bien moi truong (KHONG commit). Xem appsettings.Example.json.
 appsettings.Secrets.json
 appsettings*.secret.json
 appsettings.*.local.json
+*.env
 
 # ==========================================
 # Node / Frontend Ignores

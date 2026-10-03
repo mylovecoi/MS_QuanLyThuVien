@@ -1,8 +1,14 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using FluentValidation;
 using IdentityService.API.Authorization;
 using IdentityService.API.Configurations;
+using IdentityService.Business.Clients;
+using IdentityService.Business.Dtos.Requests;
 using IdentityService.Business.Services;
+using IdentityService.Business.Services.Implementations;
+using IdentityService.Business.Services.Interfaces;
+using IdentityService.Business.Validators;
 using IdentityService.DataAccess.Contexts;
 using IdentityService.DataAccess.Repositories.Implementations;
 using IdentityService.DataAccess.Repositories.Interfaces;
@@ -19,21 +25,18 @@ namespace IdentityService.API.Extensions
     {
         public static IServiceCollection AddDatabaseContext(this IServiceCollection services, IConfiguration configuration)
         {
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
-            if (!string.IsNullOrEmpty(connectionString))
-            {
-                services.AddDbContext<AppDbContext>(options =>
-                    options.UseSqlServer(connectionString));
-            }
-            else
-            {
-                services.AddDbContext<AppDbContext>(options =>
-                    options.UseInMemoryDatabase("IdentityInMemoryDb"));
-            }
+            // Connection string bắt buộc: ConfigurationGuard.RequireSecrets chạy trước
+            // trong Program.cs và chặn app nếu giá trị rỗng. Không có fallback InMemory
+            // vì sẽ khiến dữ liệu dev biến mất khi restart mà không có cảnh báo.
+            var connectionString = configuration.GetConnectionString("DefaultConnection")!;
+
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(connectionString));
+
             return services;
         }
 
-        public static IServiceCollection AddRepositoriesAndServices(this IServiceCollection services)
+        public static IServiceCollection AddRepositoriesAndServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUserRepository, UserRepository>();
@@ -41,6 +44,26 @@ namespace IdentityService.API.Extensions
             services.AddScoped<IInvalidatedTokenRepository, InvalidatedTokenRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IRoleService, RoleService>();
+
+            // FluentValidation: đăng ký thủ công từng validator để khỏi thêm package
+            // FluentValidation.DependencyInjectionExtensions. Validator được inject
+            // vào service và chạy qua ValidationRunner.EnsureValidAsync.
+            services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
+            services.AddScoped<IValidator<RegisterRequest>, RegisterRequestValidator>();
+            services.AddScoped<IValidator<RoleRequest>, RoleRequestValidator>();
+
+            // HTTP Client gọi sang ProfileService
+            services.AddHttpClient<IProfileServiceClient, ProfileServiceClient>(client =>
+            {
+                var baseUrl = configuration["ProfileService:BaseUrl"] ?? "http://localhost:5006";
+                client.BaseAddress = new Uri(baseUrl.TrimEnd('/') + "/");
+
+                // Timeout và số lần thử lại do ProfileServiceClient tự quản lý
+                // (đọc từ ProfileService:TimeoutSeconds / MaxRetries) để có thể
+                // retry khi service chưa kịp khởi động. Ở đây chỉ đặt fallback.
+                client.Timeout = TimeSpan.FromSeconds(10);
+            });
 
             // Permission Authorization
             services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();

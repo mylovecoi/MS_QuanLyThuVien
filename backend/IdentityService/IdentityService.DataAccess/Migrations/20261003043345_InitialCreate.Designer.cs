@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityService.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260922090511_AddRolesPermissionsAndTokens")]
-    partial class AddRolesPermissionsAndTokens
+    [Migration("20261003043345_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

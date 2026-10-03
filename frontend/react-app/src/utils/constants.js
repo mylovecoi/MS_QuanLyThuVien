@@ -3,10 +3,17 @@ export const API_ENDPOINTS = {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
     ME: '/auth/me',
+    // Phải khớp route [HttpPost("refresh-token")] ở AuthController
+    REFRESH_TOKEN: '/auth/refresh-token',
+  },
+  ROLE: {
+    LIST: '/role',
+    PERMISSIONS: '/role/permissions',
+    BY_ID: (id) => `/role/${id}`,
   },
   PROFILE: {
-    USER_PROFILE: '/userprofile',
-    BY_USER: (userId) => `/userprofile/by-user/${userId}`,
+    USER_PROFILE: '/profile',
+    BY_USER: (userId) => `/profile/by-user/${userId}`,
     PHONG_BAN: '/phongban',
     CHUC_VU: '/chucvu',
   },

@@ -45,12 +45,14 @@ export const ProfilePage = () => {
     setLoading(true);
     try {
       // 1. Fetch danh mục Phòng ban và Chức vụ
-      const [pbList, cvList] = await Promise.all([
-        profileApi.getPhongBans().catch(() => []),
-        profileApi.getChucVus().catch(() => []),
+      // Endpoint danh sách đã chuyển sang phân trang: data trả về
+      // { items, page, pageSize, totalCount, ... } thay vì mảng thuần.
+      const [pbResult, cvResult] = await Promise.all([
+        profileApi.getPhongBans().catch(() => null),
+        profileApi.getChucVus().catch(() => null),
       ]);
-      setPhongBans(pbList || []);
-      setChucVus(cvList || []);
+      setPhongBans(pbResult?.items ?? []);
+      setChucVus(cvResult?.items ?? []);
 
       // 2. Fetch UserProfile của User hiện tại
       if (user?.id) {
@@ -61,17 +63,29 @@ export const ProfilePage = () => {
             populateForm(userProf);
           }
         } catch (err) {
-          // Profile chưa tồn tại -> tạo mới mặc định
-          const defaultProf = {
+          // Backend đã tự tạo hồ sơ rỗng khi chưa có, nên 404 gần như không
+          // xảy ra nữa. Nhánh này chỉ còn để dự phòng.
+          // Trước đây catch nuốt mọi lỗi (401, 500, mạng chết) rồi coi như
+          // "chưa có profile", khiến người dùng thấy form trống mà không
+          // biết đã lỗi. Giờ chỉ coi 404 là chưa có hồ sơ, lỗi khác phải ném ra.
+          if (err.status !== 404) {
+            throw err;
+          }
+          populateForm({
             userId: user.id,
             fullName: user.fullName || '',
             workEmail: user.email || '',
-          };
-          populateForm(defaultProf);
+          });
         }
       }
     } catch (err) {
+      // Trước đây chỉ ghi console nên lỗi tải hồ sơ bị nuốt lặng, người dùng
+      // thấy trang trống mà không biết nguyên nhân.
       console.error('Lỗi khi tải dữ liệu profile:', err);
+      setMessage({
+        type: 'error',
+        text: err?.message || 'Không tải được hồ sơ. Vui lòng thử lại sau.',
+      });
     } finally {
       setLoading(false);
     }

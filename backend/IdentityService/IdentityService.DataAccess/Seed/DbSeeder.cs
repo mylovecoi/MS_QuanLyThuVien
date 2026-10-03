@@ -7,7 +7,7 @@ namespace IdentityService.DataAccess.Seed
 {
     public static class DbSeeder
     {
-        public static async Task SeedDataAsync(AppDbContext context)
+        public static async Task SeedDataAsync(AppDbContext context, Guid adminUserId)
         {
             // 1. Seed Permissions
             if (!await context.Permissions.AnyAsync())
@@ -89,10 +89,10 @@ namespace IdentityService.DataAccess.Seed
 
                 var adminUser = new UserEntity
                 {
-                    Id = Guid.NewGuid(),
+                    Id = adminUserId,
                     Username = "admin",
                     Email = "admin@example.com",
-                    PasswordHash = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes("admin123_secret_salt")), // Mật khẩu gốc: admin123
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin"), // Mật khẩu gốc: admin
                     FullName = "System Administrator",
                     Gender = Gender.Male,
                     Status = AccountStatus.Active,
