@@ -21,11 +21,15 @@
 TestResult.xml
 
 # Secret & Local Configurations (Backend)
-# appsettings.json chi chua placeholder. Gia tri thật luôn nam o user-secrets
-# hoac bien moi truong (KHONG commit). Xem appsettings.Example.json.
+# appsettings.json và appsettings.Development.json chứa secret thật → KHÔNG commit.
+# Dùng appsettings.Example.json làm template (luôn được commit).
+appsettings.json
+appsettings.Development.json
 appsettings.Secrets.json
 appsettings*.secret.json
 appsettings.*.local.json
+# Giữ lại file Example làm template tham khảo cho dev mới
+!appsettings.Example.json
 *.env
 
 # ==========================================

@@ -1,5 +1,7 @@
+using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 namespace ProfileService.DataAccess.Contexts
 {
@@ -7,8 +9,19 @@ namespace ProfileService.DataAccess.Contexts
     {
         public ProfileDbContext CreateDbContext(string[] args)
         {
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "../ProfileService.API");
+
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(basePath)
+                .AddJsonFile("appsettings.json", optional: true)
+                .AddJsonFile("appsettings.Development.json", optional: true)
+                .AddEnvironmentVariables()
+                .Build();
+
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+
             var optionsBuilder = new DbContextOptionsBuilder<ProfileDbContext>();
-            optionsBuilder.UseSqlServer("Server=DESKTOP-0LER7OP\\SQLEXPRESS;Database=ProfileDB;Trusted_Connection=True;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer(connectionString);
 
             return new ProfileDbContext(optionsBuilder.Options);
         }

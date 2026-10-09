@@ -71,14 +71,12 @@ namespace IdentityService.DataAccess.Repositories.Implementations
 
         public void Update(T entity)
         {
-            entity.UpdatedAt = DateTime.UtcNow;
             _dbSet.Update(entity);
         }
 
         public void Delete(T entity)
         {
             entity.IsDeleted = true;
-            entity.UpdatedAt = DateTime.UtcNow;
             _dbSet.Update(entity);
         }
 

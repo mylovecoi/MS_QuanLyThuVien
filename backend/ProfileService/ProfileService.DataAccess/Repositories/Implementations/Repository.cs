@@ -76,14 +76,13 @@ namespace ProfileService.DataAccess.Repositories.Implementations
 
         public void Update(T entity)
         {
-            entity.UpdatedAt = DateTime.UtcNow;
             _dbSet.Update(entity);
         }
 
         public void Delete(T entity)
         {
             entity.IsDeleted = true;
-            entity.UpdatedAt = DateTime.UtcNow;
+            // UpdatedAt và UpdatedBy sẽ được DbContext tự điền khi SaveChangesAsync()
             _dbSet.Update(entity);
         }
 
@@ -141,7 +140,6 @@ namespace ProfileService.DataAccess.Repositories.Implementations
             if (softDeleted != null)
             {
                 softDeleted.IsDeleted = false;
-                softDeleted.UpdatedAt = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
                 return (softDeleted, true);
             }

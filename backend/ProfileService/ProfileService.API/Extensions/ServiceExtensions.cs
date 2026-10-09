@@ -15,6 +15,7 @@ using ProfileServiceImpl = ProfileService.Business.Services.Implementations.Prof
 using ProfileService.DataAccess.Contexts;
 using ProfileService.DataAccess.Repositories.Implementations;
 using ProfileService.DataAccess.Repositories.Interfaces;
+using Shared.Contracts.Interfaces;
 
 namespace ProfileService.API.Extensions
 {
@@ -35,6 +36,10 @@ namespace ProfileService.API.Extensions
 
         public static IServiceCollection AddRepositoriesAndServices(this IServiceCollection services)
         {
+            // Audit tự động: đọc UserId từ JWT token của mỗi HTTP request
+            services.AddHttpContextAccessor();
+            services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IProfileRepository, ProfileRepository>();
             services.AddScoped<IPhongBanRepository, PhongBanRepository>();

@@ -18,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Contracts.Interfaces;
 
 namespace IdentityService.API.Extensions
 {
@@ -38,6 +39,10 @@ namespace IdentityService.API.Extensions
 
         public static IServiceCollection AddRepositoriesAndServices(this IServiceCollection services, IConfiguration configuration)
         {
+            // Audit tự động: đọc UserId từ JWT token của mỗi HTTP request
+            services.AddHttpContextAccessor();
+            services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
