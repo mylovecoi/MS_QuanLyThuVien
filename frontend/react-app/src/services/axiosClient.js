@@ -26,6 +26,11 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => {
+    // Download binary: giữ nguyên Blob, không unwrap envelope JSON.
+    if (response.config?.responseType === 'blob') {
+      return response.data;
+    }
+
     // 204 No Content: không có body để unwrap
     if (response.status === 204 || !response.data) {
       return null;

@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { ToastProvider } from './context/ToastContext';
 import { AppRoutes } from './routes/AppRoutes';
 import { Header } from './components/layout/Header';
 import './assets/styles.css';
@@ -11,10 +12,10 @@ export function App() {
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
-          <Header />
-          <main>
+          <ToastProvider>
+            <Header />
             <AppRoutes />
-          </main>
+          </ToastProvider>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>
