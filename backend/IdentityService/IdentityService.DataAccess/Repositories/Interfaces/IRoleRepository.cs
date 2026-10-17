@@ -9,6 +9,11 @@ namespace IdentityService.DataAccess.Repositories.Interfaces
         Task<IEnumerable<RoleEntity>> GetAllWithPermissionsAsync();
 
         /// <summary>
+        /// Lấy nhiều role theo Id (bỏ qua role đã xóa mềm), dùng để validate gán vai trò cho user.
+        /// </summary>
+        Task<IEnumerable<RoleEntity>> GetByIdsAsync(IEnumerable<Guid> roleIds);
+
+        /// <summary>
         /// Nạp role kèm cả RolePermissions và UserRoles để cập nhật/xóa có kiểm soát.
         /// </summary>
         Task<RoleEntity?> GetWithAllRelationsAsync(Guid roleId);

@@ -1,0 +1,34 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using IdentityService.DataAccess.Enums;
+
+namespace IdentityService.Business.Dtos.Requests
+{
+    /// <summary>
+    /// Admin tạo tài khoản mới. Username và Password bắt buộc.
+    /// </summary>
+    public class CreateUserRequest
+    {
+        [Required(ErrorMessage = "Tên đăng nhập không được để trống.")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "Tên đăng nhập phải từ 3 đến 50 ký tự.")]
+        public string Username { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Email không được để trống.")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Họ và tên không được để trống.")]
+        public string FullName { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Mật khẩu không được để trống.")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Mật khẩu phải có ít nhất 6 ký tự.")]
+        public string Password { get; set; } = string.Empty;
+
+        public Gender Gender { get; set; } = Gender.Unknown;
+
+        public AccountStatus Status { get; set; } = AccountStatus.Active;
+
+        public List<Guid> RoleIds { get; set; } = new List<Guid>();
+    }
+}

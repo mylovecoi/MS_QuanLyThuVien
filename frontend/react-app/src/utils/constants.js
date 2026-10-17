@@ -12,6 +12,12 @@ export const API_ENDPOINTS = {
     PERMISSIONS_GROUPED: '/role/permissions/grouped',
     BY_ID: (id) => `/role/${id}`,
   },
+  USER: {
+    LIST: '/user',
+    BY_ID: (id) => `/user/${id}`,
+    STATUS: (id) => `/user/${id}/status`,
+    PASSWORD: (id) => `/user/${id}/password`,
+  },
   PROFILE: {
     USER_PROFILE: '/profile',
     BY_USER: (userId) => `/profile/by-user/${userId}`,
@@ -36,6 +42,14 @@ export const GENDER_OPTIONS = [
   { value: 1, label: 'Nam' },
   { value: 2, label: 'Nữ' },
   { value: 3, label: 'Khác' },
+];
+
+// Khớp enum AccountStatus phía backend (Pending=0, Active=1, Locked=2, Disabled=3)
+export const ACCOUNT_STATUS_OPTIONS = [
+  { value: 0, label: 'Chờ kích hoạt' },
+  { value: 1, label: 'Đang hoạt động' },
+  { value: 2, label: 'Đã khóa' },
+  { value: 3, label: 'Vô hiệu hóa' },
 ];
 
 export const LOAI_FILE_OPTIONS = [

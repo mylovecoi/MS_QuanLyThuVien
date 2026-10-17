@@ -16,10 +16,11 @@ export const Select = ({
           {label} {required && <span className="required">*</span>}
         </label>
       )}
-      <select
-        className={`select-field ${error ? 'input-error' : ''} ${className}`}
-        {...props}
-      >
+        <select
+          className={`select-field ${error ? 'input-error' : ''} ${className}`}
+          {...props}
+          value={props.value === null || props.value === undefined ? '' : String(props.value)}
+        >
         {placeholder && <option value="">{placeholder}</option>}
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>

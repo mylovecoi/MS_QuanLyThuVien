@@ -38,6 +38,19 @@ namespace IdentityService.DataAccess.Repositories.Implementations
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<RoleEntity>> GetByIdsAsync(IEnumerable<Guid> roleIds)
+        {
+            var ids = roleIds.Where(id => id != Guid.Empty).Distinct().ToList();
+            if (ids.Count == 0)
+            {
+                return new List<RoleEntity>();
+            }
+
+            return await _dbSet
+                .Where(r => ids.Contains(r.Id) && !r.IsDeleted)
+                .ToListAsync();
+        }
+
         public async Task<IReadOnlyList<PermissionEntity>> GetAllPermissionsAsync()
         {
             return await _context.Permissions

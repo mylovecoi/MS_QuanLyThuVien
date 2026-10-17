@@ -50,6 +50,7 @@ namespace IdentityService.API.Extensions
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserService, UserService>();
 
             // FluentValidation: đăng ký thủ công từng validator để khỏi thêm package
             // FluentValidation.DependencyInjectionExtensions. Validator được inject
@@ -57,6 +58,9 @@ namespace IdentityService.API.Extensions
             services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
             services.AddScoped<IValidator<RegisterRequest>, RegisterRequestValidator>();
             services.AddScoped<IValidator<RoleRequest>, RoleRequestValidator>();
+            services.AddScoped<IValidator<CreateUserRequest>, CreateUserRequestValidator>();
+            services.AddScoped<IValidator<UpdateUserRequest>, UpdateUserRequestValidator>();
+            services.AddScoped<IValidator<ResetPasswordRequest>, ResetPasswordRequestValidator>();
 
             // HTTP Client gọi sang ProfileService
             services.AddHttpClient<IProfileServiceClient, ProfileServiceClient>(client =>

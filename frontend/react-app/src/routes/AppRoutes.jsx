@@ -4,6 +4,7 @@ import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import { ProfilePage } from '@/features/profile/pages/ProfilePage';
 import { RolePage } from '@/features/role/pages/RolePage';
+import { UserPage } from '@/features/user/pages/UserPage';
 import { FileListPage } from '@/features/file/pages/FileListPage';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { ProtectedRoute } from './ProtectedRoute';
@@ -19,6 +20,7 @@ export const AppRoutes = () => {
         <Route element={<AppLayout />}>
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/roles" element={<RolePage />} />
+          <Route path="/users" element={<UserPage />} />
           <Route path="/files" element={<FileListPage />} />
           <Route path="/" element={<Navigate to="/profile" replace />} />
         </Route>

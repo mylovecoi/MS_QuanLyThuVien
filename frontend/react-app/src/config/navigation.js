@@ -9,6 +9,7 @@ export const NAV_SECTIONS = [
     title: 'Tài khoản',
     items: [
       { id: 'profile', label: 'Hồ sơ', icon: 'User', path: '/profile' },
+      { id: 'users', label: 'Quản lý tài khoản', icon: 'Users', path: '/users', permission: 'users.index' },
       { id: 'roles', label: 'Vai trò & quyền', icon: 'Shield', path: '/roles', permission: 'roles.index' },
     ],
   },
