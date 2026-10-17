@@ -4,6 +4,7 @@ import { authApi } from '../api/authApi';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/feedback/Alert';
+import { useToast } from '@/context/ToastContext';
 import { toErrorText } from '@/utils/apiError';
 
 export const RegisterPage = () => {
@@ -11,6 +12,7 @@ export const RegisterPage = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,6 +21,10 @@ export const RegisterPage = () => {
 
     try {
       await authApi.register(formData);
+      showToast('Đăng ký thành công! Vui lòng đăng nhập bằng tài khoản vừa tạo.', {
+        type: 'success',
+        duration: 5000,
+      });
       navigate('/login');
     } catch (err) {
       // Backend trả errors[] cho cả lỗi ModelState lẫn lỗi FluentValidation,

@@ -9,7 +9,7 @@ export const NAV_SECTIONS = [
     title: 'Tài khoản',
     items: [
       { id: 'profile', label: 'Hồ sơ', icon: 'User', path: '/profile' },
-      { id: 'roles', label: 'Vai trò & quyền', icon: 'Shield', path: '/roles', permission: 'roles.read' },
+      { id: 'roles', label: 'Vai trò & quyền', icon: 'Shield', path: '/roles', permission: 'roles.index' },
     ],
   },
   {

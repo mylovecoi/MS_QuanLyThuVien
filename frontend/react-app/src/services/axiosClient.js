@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { normalizeApiError } from '@/utils/apiError';
+import { tokenStorage } from '@/utils/tokenStorage';
 
 // Tất cả request đi qua API Gateway (Port 5000)
 // Gateway sẽ forward tới đúng microservice tương ứng
@@ -15,7 +16,7 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = tokenStorage.getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -57,20 +58,19 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
+        const refreshToken = tokenStorage.getRefreshToken();
         if (refreshToken) {
           const res = await axios.post(`${GATEWAY_URL}/auth/refresh-token`, { refreshToken });
           const newAccessToken = res.data?.data?.accessToken;
           if (!newAccessToken) throw new Error('Refresh token không hợp lệ.');
 
-          localStorage.setItem('token', newAccessToken);
+          tokenStorage.setAccessToken(newAccessToken);
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
           return apiClient(originalRequest);
         }
         throw new Error('Không có refresh token.');
       } catch {
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
+        tokenStorage.clear();
         window.location.href = '/login';
         return Promise.reject(error);
       }

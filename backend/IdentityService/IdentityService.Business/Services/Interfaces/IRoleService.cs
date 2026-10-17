@@ -13,6 +13,7 @@ namespace IdentityService.Business.Services.Interfaces
         Task<PagedResult<RoleResponse>> GetRolesAsync(int page, int pageSize);
         Task<RoleResponse> GetRoleByIdAsync(Guid id);
         Task<IReadOnlyList<PermissionResponse>> GetAllPermissionsAsync();
+        Task<IReadOnlyList<PermissionGroupResponse>> GetPermissionsGroupedAsync();
         Task<RoleResponse> CreateRoleAsync(RoleRequest request);
         Task<RoleResponse> UpdateRoleAsync(Guid id, RoleRequest request);
         Task DeleteRoleAsync(Guid id);

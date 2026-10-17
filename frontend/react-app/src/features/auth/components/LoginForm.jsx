@@ -9,6 +9,7 @@ import { toErrorText } from '@/utils/apiError';
 
 export const LoginForm = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
+  const [remember, setRemember] = useState(true);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
@@ -21,7 +22,7 @@ export const LoginForm = () => {
 
     try {
       const response = await authApi.login(formData);
-      login(response);
+      login(response, remember);
       navigate('/profile');
     } catch (err) {
       setError(toErrorText(err, 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.'));
@@ -55,6 +56,16 @@ export const LoginForm = () => {
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
           required
         />
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.875rem', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+            style={{ width: '16px', height: '16px', accentColor: 'var(--accent-color)', cursor: 'pointer' }}
+          />
+          Ghi nhớ đăng nhập
+        </label>
 
         <Button type="submit" isLoading={isLoading} style={{ marginTop: '8px' }}>
           Đăng nhập

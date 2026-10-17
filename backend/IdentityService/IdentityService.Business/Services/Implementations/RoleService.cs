@@ -22,6 +22,27 @@ namespace IdentityService.Business.Services.Implementations
         /// </summary>
         public const string AdminRoleCode = "ADMIN";
 
+        /// <summary>
+        /// Thứ tự hiển thị và nhãn tiếng Việt cho từng module trên ma trận phân quyền.
+        /// Key: Module code (khớp với PermissionEntity.Module).
+        /// </summary>
+        private static readonly Dictionary<string, (string Label, int Order)> _moduleInfo = new()
+        {
+            ["Catalog"]      = ("Danh mục thư mục",      1),
+            ["Inventory"]    = ("Kho & Bản sao",          2),
+            ["Circulation"]  = ("Mượn trả sách",          3),
+            ["Acquisition"]  = ("Bổ sung tài liệu",       4),
+            ["Review"]       = ("Đánh giá & Bình luận",   5),
+            ["Notification"] = ("Thông báo",              6),
+            ["Search"]       = ("Tìm kiếm",               7),
+            ["Reporting"]    = ("Báo cáo & Thống kê",     8),
+            ["Users"]        = ("Người dùng",             9),
+            ["Roles"]        = ("Vai trò & Phân quyền",  10),
+        };
+
+        /// <summary>Thứ tự chuẩn của các action trong mỗi module.</summary>
+        private static readonly string[] _actionOrder = ["index", "create", "edit", "delete", "approve"];
+
         private readonly IRoleRepository _roleRepository;
         private readonly IValidator<RoleRequest> _validator;
 
@@ -60,6 +81,30 @@ namespace IdentityService.Business.Services.Implementations
             return permissions.Select(p => p.ToResponse()).ToList();
         }
 
+        public async Task<IReadOnlyList<PermissionGroupResponse>> GetPermissionsGroupedAsync()
+        {
+            var permissions = await _roleRepository.GetAllPermissionsAsync();
+
+            return permissions
+                .GroupBy(p => p.Module)
+                .OrderBy(g => _moduleInfo.TryGetValue(g.Key, out var info) ? info.Order : 99)
+                .Select(g =>
+                {
+                    _moduleInfo.TryGetValue(g.Key, out var moduleInfo);
+                    return new PermissionGroupResponse
+                    {
+                        Module      = g.Key,
+                        ModuleLabel = moduleInfo.Label ?? g.Key,
+                        SortOrder   = moduleInfo.Order == 0 ? 99 : moduleInfo.Order,
+                        Permissions = g
+                            .OrderBy(p => GetActionOrder(p.Code))
+                            .Select(p => p.ToResponse())
+                            .ToList()
+                    };
+                })
+                .ToList();
+        }
+
         public async Task<RoleResponse> CreateRoleAsync(RoleRequest request)
         {
             await ValidationRunner.EnsureValidAsync(_validator, request);
@@ -80,8 +125,8 @@ namespace IdentityService.Business.Services.Implementations
 
             var role = new RoleEntity
             {
-                Code = code,
-                Name = request.Name.Trim(),
+                Code        = code,
+                Name        = request.Name.Trim(),
                 Description = request.Description?.Trim() ?? string.Empty
             };
 
@@ -102,7 +147,7 @@ namespace IdentityService.Business.Services.Implementations
             var role = await _roleRepository.GetWithAllRelationsAsync(id)
                        ?? throw new NotFoundException($"Không tìm thấy vai trò với Id '{id}'.");
 
-            var code = request.Code.Trim().ToUpperInvariant();
+            var code    = request.Code.Trim().ToUpperInvariant();
             var isAdmin = role.Code == AdminRoleCode;
 
             if (isAdmin && code != AdminRoleCode)
@@ -119,8 +164,8 @@ namespace IdentityService.Business.Services.Implementations
                 }
             }
 
-            role.Code = code;
-            role.Name = request.Name.Trim();
+            role.Code        = code;
+            role.Name        = request.Name.Trim();
             role.Description = request.Description?.Trim() ?? string.Empty;
 
             var permissionIds = await EnsurePermissionsExistAsync(request.PermissionIds);
@@ -169,7 +214,7 @@ namespace IdentityService.Business.Services.Implementations
                 return Array.Empty<Guid>();
             }
 
-            var all = await _roleRepository.GetAllPermissionsAsync();
+            var all   = await _roleRepository.GetAllPermissionsAsync();
             var found = all.Select(p => p.Id).ToHashSet();
 
             var missing = requested.Where(id => !found.Contains(id)).ToList();
@@ -181,6 +226,17 @@ namespace IdentityService.Business.Services.Implementations
             }
 
             return requested;
+        }
+
+        /// <summary>
+        /// Trả về thứ tự ưu tiên của action trong permission code (ví dụ: "catalog.create" → 1).
+        /// Dùng để sort permissions trong mỗi group đúng thứ tự index/create/edit/delete/approve.
+        /// </summary>
+        private static int GetActionOrder(string code)
+        {
+            var action = code.Contains('.') ? code[(code.LastIndexOf('.') + 1)..] : code;
+            var idx    = Array.IndexOf(_actionOrder, action);
+            return idx >= 0 ? idx : 99;
         }
     }
 }

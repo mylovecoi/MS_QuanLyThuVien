@@ -9,6 +9,7 @@ export const API_ENDPOINTS = {
   ROLE: {
     LIST: '/role',
     PERMISSIONS: '/role/permissions',
+    PERMISSIONS_GROUPED: '/role/permissions/grouped',
     BY_ID: (id) => `/role/${id}`,
   },
   PROFILE: {

@@ -11,7 +11,7 @@ export const Alert = ({ type = 'error', message }) => {
       color: isError ? 'var(--error-color)' : 'var(--success-color)',
       border: `1px solid ${isError ? 'var(--error-color)' : 'var(--success-color)'}`,
       marginBottom: '16px',
-      fontSize: '0.9rem'
+      fontSize: '1rem'
     }}>
       {message}
     </div>

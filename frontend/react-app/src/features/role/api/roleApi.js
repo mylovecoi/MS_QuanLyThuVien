@@ -9,7 +9,15 @@ export const roleApi = {
   getRoles: (page = 1, pageSize = LARGE_PAGE_SIZE) =>
     axiosClient.get(API_ENDPOINTS.ROLE.LIST, { params: { page, pageSize } }),
 
+  /** Flat list — giữ nguyên để backward-compatible */
   getPermissions: () => axiosClient.get(API_ENDPOINTS.ROLE.PERMISSIONS),
+
+  /**
+   * Permissions được nhóm theo Module/Service.
+   * Trả về mảng PermissionGroupResponse, mỗi group gồm:
+   *   { module, moduleLabel, sortOrder, permissions: PermissionResponse[] }
+   */
+  getPermissionsGrouped: () => axiosClient.get(API_ENDPOINTS.ROLE.PERMISSIONS_GROUPED),
 
   createRole: (data) => axiosClient.post(API_ENDPOINTS.ROLE.LIST, data),
 

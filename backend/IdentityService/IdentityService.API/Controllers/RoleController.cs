@@ -25,7 +25,7 @@ namespace IdentityService.API.Controllers
         }
 
         [HttpGet]
-        [HasPermission("roles.read")]
+        [HasPermission("roles.index")]
         [ProducesResponseType(typeof(ApiResponse<PagedResult<RoleResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status403Forbidden)]
@@ -37,10 +37,12 @@ namespace IdentityService.API.Controllers
             return Ok(ApiResponse<PagedResult<RoleResponse>>.SuccessResult(result));
         }
 
-        // Khai báo trước {id:guid} để rõ ý định; route này không phải Guid nên
-        // vẫn không xung đột với {id:guid} nhờ ràng buộc kiểu tham số.
+        /// <summary>
+        /// Trả về toàn bộ danh sách quyền hạn dạng flat list.
+        /// Giữ nguyên để backward-compatible với các client cũ.
+        /// </summary>
         [HttpGet("permissions")]
-        [HasPermission("roles.read")]
+        [HasPermission("roles.index")]
         [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<PermissionResponse>>), StatusCodes.Status200OK)]
         public async Task<ActionResult<ApiResponse<IReadOnlyList<PermissionResponse>>>> GetAllPermissions()
         {
@@ -48,8 +50,21 @@ namespace IdentityService.API.Controllers
             return Ok(ApiResponse<IReadOnlyList<PermissionResponse>>.SuccessResult(result));
         }
 
+        /// <summary>
+        /// Trả về danh sách quyền hạn được nhóm theo Module/Service.
+        /// Dùng cho giao diện ma trận phân quyền (Permission Matrix UI).
+        /// </summary>
+        [HttpGet("permissions/grouped")]
+        [HasPermission("roles.index")]
+        [ProducesResponseType(typeof(ApiResponse<IReadOnlyList<PermissionGroupResponse>>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<ApiResponse<IReadOnlyList<PermissionGroupResponse>>>> GetPermissionsGrouped()
+        {
+            var result = await _roleService.GetPermissionsGroupedAsync();
+            return Ok(ApiResponse<IReadOnlyList<PermissionGroupResponse>>.SuccessResult(result));
+        }
+
         [HttpGet("{id:guid}")]
-        [HasPermission("roles.read")]
+        [HasPermission("roles.index")]
         [ProducesResponseType(typeof(ApiResponse<RoleResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ApiResponse<RoleResponse>>> GetRoleById(Guid id)
@@ -59,7 +74,7 @@ namespace IdentityService.API.Controllers
         }
 
         [HttpPost]
-        [HasPermission("roles.write")]
+        [HasPermission("roles.create")]
         [ProducesResponseType(typeof(ApiResponse<RoleResponse>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status409Conflict)]
@@ -70,7 +85,7 @@ namespace IdentityService.API.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        [HasPermission("roles.write")]
+        [HasPermission("roles.edit")]
         [ProducesResponseType(typeof(ApiResponse<RoleResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -82,7 +97,7 @@ namespace IdentityService.API.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        [HasPermission("roles.write")]
+        [HasPermission("roles.delete")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status409Conflict)]

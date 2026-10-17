@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axiosClient from '@/services/axiosClient';
 import { authApi } from '@/features/auth/api/authApi';
+import { tokenStorage } from '@/utils/tokenStorage';
 
 export const AuthContext = createContext(null);
 
@@ -10,15 +11,14 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = localStorage.getItem('token');
+      const token = tokenStorage.getToken();
       if (token) {
         try {
           // Lấy thông tin user hiện tại nếu có token
           const userData = await axiosClient.get('/auth/me');
           setUser(userData);
-        } catch (err) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('refreshToken');
+        } catch {
+          tokenStorage.clear();
         }
       }
       setLoading(false);
@@ -27,14 +27,16 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, []);
 
-  const login = (authData) => {
-    localStorage.setItem('token', authData.accessToken);
-    localStorage.setItem('refreshToken', authData.refreshToken);
+  const login = (authData, remember = true) => {
+    tokenStorage.setTokens(
+      { accessToken: authData.accessToken, refreshToken: authData.refreshToken },
+      remember
+    );
     setUser(authData.user);
   };
 
   const logout = async () => {
-    const refreshToken = localStorage.getItem('refreshToken');
+    const refreshToken = tokenStorage.getRefreshToken();
     // Gọi API để thu hồi token phía server (vô hiệu hóa access token hiện tại
     // và refresh token). Lỗi không chặn việc đăng xuất phía client.
     try {
@@ -42,8 +44,7 @@ export const AuthProvider = ({ children }) => {
     } catch {
       /* bỏ qua */
     }
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
+    tokenStorage.clear();
     setUser(null);
   };
 

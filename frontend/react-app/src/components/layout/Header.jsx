@@ -29,7 +29,7 @@ export const Header = () => {
       }}
     >
       <Link to={user ? '/profile' : '/'} style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-        ⚡ Identity<span style={{ color: 'var(--accent-color)' }}>Platform</span>
+        📚 Quản lý thư viện
       </Link>
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         <button className="theme-toggle-btn" onClick={toggleTheme} title="Chuyển chế độ Giao diện">
